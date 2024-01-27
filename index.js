@@ -25,14 +25,29 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+
+    const foodsCollection = client.db("food-hub").collection("foods");
+
+    // get foods from DB
+
+    app.get("/foods", async (req, res) => {
+      try {
+        const result = await foodsCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        console.error("Error fetching foods:", error);
+        res.status(500).send("Internal Server Error");
+      }
+    });
 
     app.get("/", (req, res) => {
       res.send("Hello World!");
     });
+
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
