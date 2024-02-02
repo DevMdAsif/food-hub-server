@@ -27,12 +27,23 @@ async function run() {
     // Send a ping to confirm a successful connection
 
     const foodsCollection = client.db("food-hub").collection("foods");
+    const reviewCollection = client.db("food-hub").collection("reviews");
 
     // get foods from DB
 
-    app.get("/foods", async (req, res) => {
+    app.get("/api/foods", async (req, res) => {
       try {
         const result = await foodsCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        console.error("Error fetching foods:", error);
+        res.status(500).send("Internal Server Error");
+      }
+    });
+
+    app.get("/api/reviews", async (req, res) => {
+      try {
+        const result = await reviewCollection.find().toArray();
         res.send(result);
       } catch (error) {
         console.error("Error fetching foods:", error);
